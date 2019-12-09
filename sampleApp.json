@@ -1,0 +1,43 @@
+{
+  "configuration":{
+    "loginUrl": "https://segalfamilyfoundation--SFFPartial.cs28.my.salesforce.com/",
+		"username":"un",
+		"password":"pw",
+		"securityToken": "st"
+  },
+  "data":{
+    "ActiveProgramming": "more words",
+    "Address": null,
+    "AddressCity": "Lilongwe",
+    "AddressCountry": "Malawi",
+    "AddressStreet": "somewhere",
+    "AddressZip": null,
+    "Budget2018": 10000,
+    "Budget2019": 10000,
+    "Budget2020": 10000,
+    "CapacityPriorities": "more words",
+    "ContactEmail": "kate@ktest.org",
+    "ContactName": "Kate Anderson",
+    "ContactPhone": 8622502279,
+    "CoreActivities": "more words",
+    "DemandServices": "more words",
+    "Email": "info@ktest.org",
+    "Expectations": "more words",
+    "Mission": "more words",
+    "Networks": "more words",
+    "NumberStaff": 20,
+    "NumberVolunteers": 0,
+    "Website": null,
+    "OrgName": "Katherine's Test",
+    "OrgNeeds": "more words",
+    "Phone": 8622502279,
+    "ProgActivities": "Youth and Women Engagement, Women Engagement, Capacity Building, Health and Reproductive Health",
+    "Responsibilities": "more words",
+    "SpecialSauce": "more words",
+    "Timestamp": "2019-12-05T19:57:41.144Z",
+    "WhyApply": "more words",
+    "YearRegistered": 2019,
+    "__query_params": {},
+    "formId": "SIIAccelerate2020_Malawi"
+  }
+}
