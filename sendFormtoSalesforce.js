@@ -1,28 +1,19 @@
-alterState(state => {
-  //Form unique AccountId to query existing matching Accounts
-  state.orgName = state.data.OrgName; //OrgName might contain an apostrophe e.g., {"OrgName" : "Katherine's Test"} - How can we reformat so does not output Katherine\'s Test?
-  state.website =
-    state.data.Website === undefined || state.data.Website === null
-      ? ''
-      : state.data.Website;
-  state.orgId = state.orgName + state.website;
-  return state;
-});
-
-query(`SELECT Id FROM Account WHERE Account_ID__c = '${state.orgId}'`); //Query Accounts for matching OrgName + Website info
-alterState(state => {
-  console.log(state);
-  state.account = state.references[0].records; //map query results to state.account object - Not sure this is right?
-  return state;
-});
+query(
+  `SELECT Id FROM Account WHERE Name = '` +
+    (state.data.OrgName || '') +
+    (state.data.Website || '') +
+    `'`
+);
 
 upsert(
   'Account',
-  'Organization_ID__c',
+  'Id',
   fields(
     field('Name', dataValue('OrgName')),
     field('Phone', dataValue('Phone')),
-    field('Organization_ID__c', state.references[0].records.Id), // Account Id returned from query
+    field('Id', state => {
+      return state.references[0].records[0].Id;
+    }),
     field('BillingStreet', dataValue('AddressStreet')),
     field('BillingCity', dataValue('AddressCity')),
     field('BillingCountry', dataValue('AddressCountry')),
@@ -46,7 +37,9 @@ upsert(
     field('Email', dataValue('ContactEmail')),
     field('Phone', dataValue('ContactPhone')),
     field('Is_Primary_Contact__c', true),
-    relationship('Account', 'Organization_ID__c', state.account.Id) //see L20 - Account Id returned from query
+    field('Account', state => {
+      return state.references[1].records[0].Id; //see L20 - Account Id returned from query
+    })
   )
 );
 
