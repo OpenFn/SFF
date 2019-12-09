@@ -1,6 +1,6 @@
 alterState(state => { //Form unique AccountId to query existing matching Accounts
   state.orgName = state.data.OrgName; //OrgName might contain an apostrophe e.g., {"OrgName" : "Katherine's Test"} - How can we reformat so does not output Katherine\'s Test?
-  state.website = (state.data.Website===undefined ? '' : state.data.Website);
+  state.website = (state.data.Website===undefined || state.data.Website===null ? '' : state.data.Website);
   state.orgId = state.orgName + state.website;
   return state;
 });
@@ -11,12 +11,11 @@ alterState(state => {
   state.account = state.references[0].records; //map query results to state.account object - Not sure this is right?
   return state;
 });
-
 each(
   upsert("Account", "Organization_ID__c", fields(
     field("Name", dataValue("OrgName")),
     field("Phone", dataValue("Phone")),
-    field("Organization_ID__c", state.account.Id), // Account Id returned from query
+    field("Organization_ID__c", state.references[0].records.Id), // Account Id returned from query
     field("BillingStreet", dataValue("AddressStreet")),
     field("BillingCity", dataValue("AddressCity")),
     field("BillingCountry", dataValue("AddressCountry")),
