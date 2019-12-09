@@ -11,7 +11,7 @@ alterState(state => {
   state.account = state.references[0].records; //map query results to state.account object - Not sure this is right?
   return state;
 });
-each(
+
   upsert("Account", "Organization_ID__c", fields(
     field("Name", dataValue("OrgName")),
     field("Phone", dataValue("Phone")),
@@ -20,7 +20,8 @@ each(
     field("BillingCity", dataValue("AddressCity")),
     field("BillingCountry", dataValue("AddressCountry")),
     field("Website", dataValue("Website"))
-  ))(state),
+  ));
+
   upsert("Contact", "Email", fields( //upsert via email
     field("FirstName", (state)=>{
       var names = dataValue("ContactName")(state).split(' ');
@@ -34,7 +35,8 @@ each(
     field("Phone", dataValue("ContactPhone")),
     field("Is_Primary_Contact__c", true),
     relationship("Account", "Organization_ID__c", state.account.Id) //see L20 - Account Id returned from query
-  ))(state),
+  ));
+
   upsert("Form__c", "Google_Application_Id__c", fields(
     field("Google_Application_Id__c", (state)=>{
       var id = "SII2020-" + dataValue("Timestamp")(state); //concatenate App Name + Timestamp to create a uniqueId
@@ -65,5 +67,4 @@ each(
     field("Other_Partnerships__c", dataValue("Networks")),
     field("Why_Apply__c", dataValue("WhyApply")),
     field("Expectations__c", dataValue("Expectations"))
-  ))(state)
-);
+  ));
