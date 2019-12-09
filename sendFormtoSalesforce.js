@@ -1,18 +1,13 @@
-query(
-  `SELECT Id FROM Account WHERE Name = '` +
-    (state.data.OrgName || '') +
-    (state.data.Website || '') +
-    `'`
-);
-
 upsert(
   'Account',
-  'Id',
+  'Organization_ID__c',
   fields(
     field('Name', dataValue('OrgName')),
     field('Phone', dataValue('Phone')),
-    field('Id', state => {
-      return state.references[0].records[0].Id;
+    field('Organization_ID__c', state => {
+      var website = (state.data.Website==null? '' : state.data.Website)
+      var id = state.data.OrgName + website;
+      return id;
     }),
     field('BillingStreet', dataValue('AddressStreet')),
     field('BillingCity', dataValue('AddressCity')),
@@ -23,9 +18,9 @@ upsert(
 
 upsert(
   'Contact',
-  'Email',
+  'Email', //upsert via email
   fields(
-    //upsert via email
+    field('Email', dataValue('ContactEmail')),
     field('FirstName', state => {
       var names = dataValue('ContactName')(state).split(' ');
       return names.slice(0, -1).join(' '); //returns firstName only
@@ -34,11 +29,12 @@ upsert(
       var names = dataValue('ContactName')(state).split(' ');
       return names.slice(-1).join(' '); //returns lastName only
     }),
-    field('Email', dataValue('ContactEmail')),
     field('Phone', dataValue('ContactPhone')),
     field('Is_Primary_Contact__c', true),
-    field('Account', state => {
-      return state.references[1].records[0].Id; //see L20 - Account Id returned from query
+    relationship('Account', 'Organization_ID__c', state =>{
+      var website = (state.data.Website==null? '' : state.data.Website)
+      var id = state.data.OrgName + website;
+      return id;
     })
   )
 );
@@ -59,9 +55,7 @@ upsert(
     field('Programmatic_Activities__c', state => {
       //convert to multiselect
       var act = dataValue('ProgActivities')(state);
-      return act !== null && act !== undefined
-        ? act.toString().replace(/,/g, ';')
-        : null;
+      return (act !== null && act !== undefined ? act.toString().replace(/,/g, ';') : null);
     }),
     field('Demand_for_Services__c', dataValue('DemandServices')),
     field('Mission_Statement__c', dataValue('Mission')),
